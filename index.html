@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+    <head>
+        <title>pathExample</title>
+        <meta charset='utf-8' />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+    </head>
+
+    <style type="text/css">
+    body{
+        background-color: #f0f0f0;
+    } 
+    </style>
+    <body>
+    <!-- <div id="diagramm"></div> -->
+        <canvas id='diagramm' >Обновите браузер</canvas>
+    </body>
+    <script src="./chart.js"></script>
+
+    <script type="text/javascript">
+        var chart = new Chart('diagramm', 600, 600);
+        var data = {
+                    name: "World",
+                    pices:[
+                        { name: "Sugar & Fat", value: 28, nominal: "570 Cal.", color: "#e2cdf8", active:"#9e50ec" },
+                        { name: "Grain", value:  29, nominal: "1,296 Cal.", color:  "#ebe6da", active:"#bdab84" },
+                        { name: "Other", value: 8, nominal: "170 Cal.", color: "#bfe4fe", active:"#23a4ff" },
+                        { name: "Meat", value: 14, nominal: "272 Cal.", color: "#fec9c3", active:"#ff4733" },
+                        { name: "Produce", value: 10, nominal: "327 Cal.", color: "#d9eeb6", active:"#7dc903"},
+                        { name: "Dairy & Egs", value: 11, nominal: "235 Cal.", color: "#feeab7", active: "#ffbb00"}
+                    ]
+                };
+        chart.set_data(data);
+        chart.draw();
+    </script>
+</html>
