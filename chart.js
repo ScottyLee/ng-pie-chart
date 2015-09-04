@@ -127,8 +127,16 @@ Chart.prototype.set_active = function(pice) {
 
 Chart.prototype.on_click = function(event) {
 	var pice = this.get_pice_by_coords(event.pageX, event.pageY);
-	if (pice != undefined)
+
+	if (pice != undefined){
+		var way = (pice.pice_begin + pice.sector_center);
+		if (way > Math.PI){
+			this.draw( (2 * Math.PI) - (pice.pice_begin + pice.sector_center) );	
+		}else{
+			this.draw( - (pice.pice_begin + pice.sector_center) );
+		}
 		console.log(pice.data.name);
+	}
 };
 
 
@@ -154,13 +162,6 @@ Chart.prototype.get_pice_by_coords = function(x,y) {
 };
 
 
-
-
-
-
-
-
-
 function Pice (parent, data) {
 	this.data = data;
 	this.parent = parent;
@@ -170,8 +171,10 @@ function Pice (parent, data) {
 Pice.prototype.draw = function(current_end) {
 	var context = this.parent.context;
 	var parent = this.parent;
-	var cur_val = Math.PI * 2 * ( this.data.value / parent.total );
+	var sector_center = Math.PI * ( this.data.value / parent.total );
+	var cur_val = sector_center * 2;
 	
+
 	context.fillStyle = this.active ? this.data.active: this.data.color;
 	
 	context.strokeStyle="#FFFFFF";
@@ -186,7 +189,8 @@ Pice.prototype.draw = function(current_end) {
 	context.closePath();
 
 	this.pice_begin = current_end;
-	this.pice_end = current_end + cur_val
+	this.sector_center = sector_center;
+	this.pice_end = current_end + cur_val;
 	return current_end + cur_val
 };
 
