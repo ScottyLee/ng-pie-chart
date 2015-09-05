@@ -1,4 +1,5 @@
 function Chart (element_name, width, height) {
+	this.main_anc = 0;
 	this.name = "";
 	this.radius = 150;
 	this.active_pice = undefined;
@@ -20,6 +21,8 @@ function Chart (element_name, width, height) {
 
 	this.pices = [];
 	this.add_listeners();
+
+  	// console.log(requestAnimationFrame);
 }
 
 Chart.prototype.set_data = function(data) {
@@ -38,10 +41,11 @@ Chart.prototype.set_data = function(data) {
 	};
 };
 
-Chart.prototype.draw = function(initial_pivot) {
-	var lastend = 0;
-	if (initial_pivot != undefined && initial_pivot != null && typeof( initial_pivot ) == 'number' ){
-		lastend = initial_pivot;
+Chart.prototype.draw = function(anc) {
+	var lastend = this.main_anc;
+	if (anc != undefined && anc != null && typeof( anc ) == 'number' ){
+		lastend = anc;
+		this.main_anc = anc;
 	}
 
 	for (var i = this.pices.length - 1; i >= 0; i--) {
@@ -83,12 +87,8 @@ Chart.prototype.draw_center = function() {
 	    	context.fillStyle = "#333333"
 	    	context.font = '10px Times new roman';
 	    	context.fillText(this.active_pice.data.nominal, this.centerX , this.centerY + 35);
-	    }
-    	
+	    }	
 	}
-	
-	
-
 };
 
 Chart.prototype.add_listeners = function() {
@@ -127,16 +127,28 @@ Chart.prototype.set_active = function(pice) {
 
 Chart.prototype.on_click = function(event) {
 	var pice = this.get_pice_by_coords(event.pageX, event.pageY);
-
+	this.active_pice = pice;
+	pice.set_active( true );
 	if (pice != undefined){
-		var way = (pice.pice_begin + pice.sector_center);
-		if (way > Math.PI){
-			this.draw( (2 * Math.PI) - (pice.pice_begin + pice.sector_center) );	
+		var way = pice.pice_begin + pice.pice_center;
+		if ( ( ( 2 * Math.PI ) - way ) < way ){
+			console.log("По часовой стрелке");
+			// по часовой стрелке
+			//вычитать надо
+			// this.set_rotation( false, this.main_anc - ((2 * Math.PI) - pice.pice_begin));
+			this.set_rotation(false, (2.5 * Math.PI) % (2 * Math.PI));
 		}else{
-			this.draw( - (pice.pice_begin + pice.sector_center) );
+			console.log("Против часовой стрелки");
+			//против часовой стрелки
+			//добавлять надо
 		}
-		console.log(pice.data.name);
 	}
+};
+
+
+Chart.prototype.set_rotation = function(direction, anc) {
+	this.main_anc = anc;
+	this.draw();
 };
 
 
@@ -149,6 +161,7 @@ Chart.prototype.get_pice_by_coords = function(x,y) {
 	var distanceFromCentre = Math.sqrt( Math.pow( Math.abs( xFromCentre ), 2) + Math.pow( Math.abs( yFromCentre ), 2));
 	if (distanceFromCentre > this.radius || distanceFromCentre < this.inner_radius ) return undefined;
     var clickAngle = Math.atan2(yFromCentre, xFromCentre);
+    
     if ( clickAngle < 0 ) 
     	clickAngle = 2 * Math.PI + clickAngle;
     clickAngle = clickAngle;
@@ -166,36 +179,53 @@ function Pice (parent, data) {
 	this.data = data;
 	this.parent = parent;
 	this.active = false;
-}
+};
+
+Pice.prototype.get_center = function() {
+	var b = this.pice_begin;
+	var e = this.pice_end;
+	if (b > e)
+		e += 2*Math.PI;
+	return (e - b) % (2 * Math.PI);
+};
+
 
 Pice.prototype.draw = function(current_end) {
 	var context = this.parent.context;
 	var parent = this.parent;
-	var sector_center = Math.PI * ( this.data.value / parent.total );
-	var cur_val = sector_center * 2;
+	var cur_val = 2 * Math.PI * ( this.data.value / parent.total );
 	
-
+	
 	context.fillStyle = this.active ? this.data.active: this.data.color;
-	
-	context.strokeStyle="#FFFFFF";
+	context.strokeStyle = "#FFFFFF";
 	context.lineWidth = 1;
+
+	this.pice_begin = current_end % (2 * Math.PI);
+	this.pice_end = (current_end + cur_val) % (2 * Math.PI);
+	this.pice_center = this.get_center();
+
 
 	context.beginPath();
 	context.moveTo(parent.centerX , parent.centerY);
-	context.arc(parent.centerX, parent.centerY, parent.radius, current_end, current_end + cur_val, false);
+	context.arc(parent.centerX, parent.centerY, parent.radius, this.pice_begin, this.pice_end, false);
 	context.lineTo(this.centerX , this.centerY);
 	context.fill();
 	context.stroke();
 	context.closePath();
-
-	this.pice_begin = current_end;
-	this.sector_center = sector_center;
-	this.pice_end = current_end + cur_val;
 	return current_end + cur_val
 };
 
 Pice.prototype.hit_anc = function(anc) {
-	return (this.pice_begin < anc) && (this.pice_end > anc)
+	if (this.pice_begin > this.pice_end){
+		var tmp_end = 0;
+		if (this.pice_end == 0){
+			tmp_end = 2 * Math.PI;
+			return (this.pice_begin < anc ) && (anc < tmp_end);
+		}
+		tmp_end = 2 * Math.PI + this.pice_end;
+		return (this.pice_begin < anc ) && (anc < tmp_end);
+	}
+	return (this.pice_begin < anc ) && (anc < this.pice_end);
 };
 
 
@@ -203,8 +233,3 @@ Pice.prototype.set_active = function(state) {
 	if (typeof( state ) == 'boolean')
 		this.active = state;
 };
-
-
-
-
-
