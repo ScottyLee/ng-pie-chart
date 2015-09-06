@@ -99,10 +99,10 @@ Chart.prototype.add_listeners = function() {
 
 Chart.prototype.on_mousemove = function(event) {
 	var pice = this.get_pice_by_coords(event.pageX, event.pageY);
-	// if (pice != undefined){
+	if (pice != undefined){
 		this.set_active( pice );
 		// console.log(pice.data.name);
-	// }
+	}
 };
 
 Chart.prototype.set_active = function(pice) {
@@ -127,18 +127,21 @@ Chart.prototype.set_active = function(pice) {
 
 Chart.prototype.on_click = function(event) {
 	var pice = this.get_pice_by_coords(event.pageX, event.pageY);
-	this.active_pice = pice;
-	pice.set_active( true );
+	this.set_active();
 	if (pice != undefined){
+		this.active_pice = pice;
+		pice.set_active( true );
+
 		var way = pice.pice_begin + pice.pice_center;
 		if ( ( ( 2 * Math.PI ) - way ) < way ){
 			console.log("По часовой стрелке");
 			// по часовой стрелке
 			//вычитать надо
-			// this.set_rotation( false, this.main_anc - ((2 * Math.PI) - pice.pice_begin));
-			this.set_rotation(false, (2.5 * Math.PI) % (2 * Math.PI));
+			this.set_rotation( false, this.main_anc + ( (2 * Math.PI) - pice.pice_begin) );
+			// this.set_rotation(false, (2.5 * Math.PI) % (2 * Math.PI));
 		}else{
 			console.log("Против часовой стрелки");
+			this.set_rotation( false, this.main_anc - ( this.main_anc - pice.pice_begin) );
 			//против часовой стрелки
 			//добавлять надо
 		}
@@ -147,7 +150,14 @@ Chart.prototype.on_click = function(event) {
 
 
 Chart.prototype.set_rotation = function(direction, anc) {
-	this.main_anc = anc;
+	console.log( this.main_anc );
+	console.log( anc % (2 * Math.PI) );
+	if (this.main_anc == ( anc % (2 * Math.PI) ) ){
+		this.main_anc = 0;
+	}else{
+		this.main_anc = anc % (2 * Math.PI);
+	}
+	// console.log(this.main_anc);
 	this.draw();
 };
 
@@ -181,19 +191,10 @@ function Pice (parent, data) {
 	this.active = false;
 };
 
-Pice.prototype.get_center = function() {
-	var b = this.pice_begin;
-	var e = this.pice_end;
-	if (b > e)
-		e += 2*Math.PI;
-	return (e - b) % (2 * Math.PI);
-};
-
-
 Pice.prototype.draw = function(current_end) {
 	var context = this.parent.context;
 	var parent = this.parent;
-	var cur_val = 2 * Math.PI * ( this.data.value / parent.total );
+	var new_end = 2 * Math.PI * ( this.data.value / parent.total );
 	
 	
 	context.fillStyle = this.active ? this.data.active: this.data.color;
@@ -201,9 +202,8 @@ Pice.prototype.draw = function(current_end) {
 	context.lineWidth = 1;
 
 	this.pice_begin = current_end % (2 * Math.PI);
-	this.pice_end = (current_end + cur_val) % (2 * Math.PI);
-	this.pice_center = this.get_center();
-
+	this.pice_end = (current_end + new_end) % (2 * Math.PI);
+	this.pice_center = ( current_end + ( (new_end - current_end) / 2 ) ) % (2 * Math.PI);
 
 	context.beginPath();
 	context.moveTo(parent.centerX , parent.centerY);
@@ -212,7 +212,8 @@ Pice.prototype.draw = function(current_end) {
 	context.fill();
 	context.stroke();
 	context.closePath();
-	return current_end + cur_val
+
+	return current_end + new_end
 };
 
 Pice.prototype.hit_anc = function(anc) {
