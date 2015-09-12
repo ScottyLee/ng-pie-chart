@@ -22,12 +22,41 @@
         var data = {
                     name: "World",
                     pices:[
-                        { name: "Sugar & Fat", value: 28, nominal: "570 Cal.", color: "#e2cdf8", active:"#9e50ec" },
-                        { name: "Grain", value:  29, nominal: "1,296 Cal.", color:  "#ebe6da", active:"#bdab84" },
-                        { name: "Other", value: 8, nominal: "170 Cal.", color: "#bfe4fe", active:"#23a4ff" },
-                        { name: "Meat", value: 14, nominal: "272 Cal.", color: "#fec9c3", active:"#ff4733" },
-                        { name: "Produce", value: 10, nominal: "327 Cal.", color: "#d9eeb6", active:"#7dc903"},
-                        { name: "Dairy & Egs", value: 11, nominal: "235 Cal.", color: "#feeab7", active: "#ffbb00"}
+                        { name: "Sugar & Fat", value: 20, nominal: "570 Cal.",      color: "#e2cdf8", active:"#9e50ec", pices: [
+                            {name: "Shugar & Sweeteners", value: 8, nominal: "8%",  color: "#9e5be9", active:"#9e50e0"},
+                            {name: "Vegetable Oils", value: 10, nominal: "10%",     color: "#8431e3", active:"#9e50e0"},
+                            {name: "Oil Crops", value: 2, nominal: "2%",            color: "#6d26c2", active:"#9e50e0"}
+                        ]},
+                        { name: "Grain", value:  45, nominal: "1,296 Cal.",         color: "#ebe6da", active:"#bdab84", pices: [
+                            {name: "Rice", value: 19, nominal: "19%",               color: "#bfb090", active:"#bfb090"},
+                            {name: "Wheat", value: 18, nominal: "18%",              color: "#b19f79", active:"#b19f79"},
+                            {name: "Maize", value: 5, nominal: "5%",                color: "#a08a59", active:"#a08a59"},
+                            {name: "Other Cereals", value: 3, nominal: "3%",        color: "#8f7c53", active:"#8f7c53"}]
+                         },
+                        { name: "Other", value: 5, nominal: "170 Cal.",                 color: "#bfe4fe", active:"#23a4ff", pices: [
+                            {name: "Pilses ** 2",           value: 2, nominal: "1%",    color: "#008cf0", active:"#008cf0"},
+                            {name: "Alcoholic beverages",   value: 2, nominal: "5%",    color: "#006ebd", active:"#006ebd"},
+                            {name: "Miscellaneous",         value: 1, nominal: "2%",    color: "#00508a", active:"#00508a"}
+                        ]},
+                        { name: "Meat", value: 9, nominal: "272 Cal.",              color: "#fec9c3", active:"#ff4733", pices: [
+                            {name: "Beef",              value: 1, nominal: "1%",    color: "#ff220a", active:"#ff220a"},
+                            {name: "Pork",              value: 4, nominal: "4%",    color: "#e11600", active:"#e11600"},
+                            {name: "Poultry",           value: 2, nominal: "2%",    color: "#b81200", active:"#b81200"}, 
+                            {name: "Seafood",           value: 1, nominal: "1%",    color: "#8f0e00", active:"#8f0e00"}, 
+                            {name: "Other Meat",        value: 1, nominal: "1%",    color: "#660a00", active:"#660a00"}                            
+                        ]},
+                        
+                        { name: "Produce", value: 11, nominal: "327 Cal.",          color: "#d9eeb6", active:"#7dc903", pices: [
+                            {name: "Starchy Roots", value: 5, nominal: "5%",        color: "#7dc903", active:"#7dc903"},
+                            {name: "Vegetables",    value: 3, nominal: "3%",        color: "#6baa06", active:"#6baa06"},
+                            {name: "Fruits",        value: 3, nominal: "3%",        color: "#4b7901", active:"#4b7901"}
+                        ]},
+                        
+                        { name: "Dairy & Egs", value: 8, nominal: "235 Cal.",       color: "#feeab7", active: "#ffbb00", pices: [
+                            {name: "Eggs", value: 1, nominal: "1%",                 color: "#ffbb00", active:"#ffbb00"},
+                            {name: "Milk", value: 5, nominal: "5%",                 color: "#d79d00", active:"#d79d00"},
+                            {name: "Animal fats", value: 2, nominal: "2%",          color: "#ae7f00", active:"#ae7f00"}
+                        ] }
                     ]
                 };
         chart.set_data(data);
